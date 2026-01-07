@@ -14,6 +14,10 @@ from src.agenticAI_full_workflow.agent.agent_workflow import AgentWorkflowBuilde
 # Load .env from project root (or wherever it is found up the tree)
 load_dotenv(find_dotenv(), override=True)
 
+# Fix for psycopg on Windows (ProactorEventLoop not supported)
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 # Helper for async input to prevent blocking the event loop
 async def ainput(prompt: str = "") -> str:
     return await asyncio.to_thread(input, prompt)
@@ -25,7 +29,7 @@ async def run_interactive():
     
     print("[INIT]: Building Agent Workflow...")
     builder = AgentWorkflowBuilder()
-    graph = builder.build()
+    graph = await builder.build()
     
     # Generate a unique thread ID for this session
     current_time = int(time.time())

@@ -1,7 +1,7 @@
 from langgraph.graph import StateGraph, END, START
 from langgraph.checkpoint.memory import MemorySaver # For HITL
 from typing import Literal
-
+from src.agenticAI_full_workflow.utils.db_manager import db_manager
 from src.agenticAI_full_workflow.agent_state.state import AgentState
 from src.agenticAI_full_workflow.project_nodes.scout_node import scout_node
 from src.agenticAI_full_workflow.project_nodes.agent_node import agent_node
@@ -28,9 +28,9 @@ class AgentWorkflowBuilder:
     def __init__(self):
         print("[INFO]: Initializing Agent Workflow Builder...")
 
-    def build(self):
+    async def build(self):
         # 1. Initialize Memory for HITL
-        memory = MemorySaver()
+        memory = await db_manager.get_checkpointer()
         workflow = StateGraph(AgentState)
 
         # 2. Add All Nodes
